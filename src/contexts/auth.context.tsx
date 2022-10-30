@@ -1,8 +1,9 @@
-import { getCookie, setCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import {
   createContext,
   ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState
@@ -18,16 +19,17 @@ interface AuthProviderProps {
 interface AuthContextProps {
   user: User | null;
   signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
 }
 
-export const AuthContext = createContext({} as AuthContextProps);
+const AuthContext = createContext({} as AuthContextProps);
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const storeSession = useCallback((user: User, token: string) => {
     if (token) {
-      setCookie('@mare-mansa:token', token, {
+      setCookie('@agendei:token', token, {
         maxAge: 60 * 60 * 24 //expira em 24horas
       });
     }
@@ -43,8 +45,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     [storeSession]
   );
 
+  const signOut = useCallback(() => {
+    deleteCookie('agendei:token');
+    setUser(null);
+  }, []);
+
   useEffect(() => {
-    const token = getCookie('@mare-mansa:token');
+    const token = getCookie('@agendei:token');
     if (token) {
       AuthService.getMe(`${token}`).then(user =>
         storeSession(user, `${token}`)
@@ -55,9 +62,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const providerValue = useMemo(
     () => ({
       signIn,
+      signOut,
       user
     }),
-    [signIn, user]
+    [signIn, signOut, user]
   );
 
   return (
@@ -66,3 +74,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+
+  return context;
+};
+
+export { useAuth, AuthProvider };

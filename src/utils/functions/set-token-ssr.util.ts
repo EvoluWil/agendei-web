@@ -8,7 +8,7 @@ export const setTokenSsr = (
   res: ServerResponse
 ) => {
   try {
-    const token = getCookie('@mare-mansa:token', { req, res });
+    const token = getCookie('@agendei:token', { req, res });
     if (token) {
       return (api.defaults.headers['Authorization'] = `Bearer ${token}`);
     }
