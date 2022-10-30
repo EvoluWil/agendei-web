@@ -21,7 +21,7 @@ export default class MyDocument extends Document {
             rel="stylesheet"
             href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
           />
-          <link rel="icon" href="/favicon.png" sizes="any" type="image/png" />
+          <link rel="icon" href="/favicon.png" type="image/png" />
         </Head>
         <body>
           <Main />
