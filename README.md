@@ -3,7 +3,7 @@
 </h1>
 
 
-## 🧐 Sobre <a name = "fabricio"></a>
+## 🧐 Sobre 
 
 <h4 align="center"> 
 	Agendei é um sistema de eventos, com genciamento de aprovação, a ideia do projeto patiu de um desafio para colocação profissional
