@@ -8,6 +8,7 @@ interface MenuItems {
   name: string;
   icon: JSX.Element;
   signOut?: boolean;
+  auth?: boolean;
 }
 
 interface NavigationDrawerProps {
