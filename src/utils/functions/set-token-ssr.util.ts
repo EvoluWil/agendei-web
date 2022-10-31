@@ -10,7 +10,7 @@ export const setTokenSsr = (
   try {
     const token = getCookie('@agendei:token', { req, res });
     if (token) {
-      return (api.defaults.headers['Authorization'] = `Bearer ${token}`);
+      return (api.defaults.headers.common['Authorization'] = `Bearer ${token}`);
     }
     throw new Error('Token não encontrado');
   } catch (err) {
