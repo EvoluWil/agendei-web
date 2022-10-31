@@ -1,3 +1,6 @@
+import { IEvent } from './event.model';
+import { Reservation } from './reservation.model';
+
 export interface User {
   id: string;
   email: string;
@@ -7,4 +10,6 @@ export interface User {
   role: 'ADMIN' | 'COMMON';
   createdAt: Date;
   updatedAt: Date;
+  ownerEvents: IEvent[];
+  reservations: Reservation[];
 }

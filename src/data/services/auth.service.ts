@@ -1,3 +1,4 @@
+import { FieldValues } from 'react-hook-form';
 import { User } from '../models/user.model';
 import { api } from './api';
 
@@ -22,7 +23,7 @@ class AuthServiceClass {
     return data;
   }
 
-  /*   async updatePassword(
+  async updatePassword(
     { password, passwordConfirmation, oldPassword }: FieldValues,
     userId: string
   ) {
@@ -32,7 +33,7 @@ class AuthServiceClass {
       oldPassword
     });
   }
- */
+
   async resetPassword(userId: string) {
     await api.put(`/auth/reset-password/${userId}`);
   }

@@ -12,7 +12,7 @@ import { UserService } from '../data/services/user.service';
 
 interface UserContextData {
   getUsers: (query: Query) => Promise<User[]>;
-  getUser: (userId: string) => Promise<User>;
+  getUser: (userId: string, query: Query) => Promise<User>;
   updateUser: (userId: string, data: FieldValues) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   createUser: (data: FieldValues) => Promise<User>;
@@ -29,8 +29,8 @@ const UserProvider: React.FC<UserContextProps> = ({ children }) => {
     return UserService.getUsers(query);
   }, []);
 
-  const getUser = useCallback(async (userId: string) => {
-    return UserService.getUser(userId);
+  const getUser = useCallback(async (userId: string, query: Query) => {
+    return UserService.getUser(userId, query);
   }, []);
 
   const createUser = useCallback(async (data: FieldValues) => {

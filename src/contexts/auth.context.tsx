@@ -8,6 +8,7 @@ import {
   useMemo,
   useState
 } from 'react';
+import { FieldValues } from 'react-hook-form';
 import { User } from '../data/models/user.model';
 import { api } from '../data/services/api';
 import { AuthService } from '../data/services/auth.service';
@@ -19,6 +20,7 @@ interface AuthProviderProps {
 interface AuthContextProps {
   user: User | null;
   signIn: (email: string, password: string) => Promise<void>;
+  updatePassword: (data: FieldValues) => Promise<void>;
   signOut: () => void;
 }
 
@@ -33,7 +35,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         maxAge: 60 * 60 * 24 //expira em 24horas
       });
     }
-    api.defaults.headers['Authorization'] = `Bearer ${token}`;
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(user);
   }, []);
 
@@ -43,6 +45,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       storeSession(user, token);
     },
     [storeSession]
+  );
+
+  const updatePassword = useCallback(
+    async (data: FieldValues) => {
+      return AuthService.updatePassword(data, user?.id || '');
+    },
+    [user?.id]
   );
 
   const signOut = useCallback(() => {
@@ -63,9 +72,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     () => ({
       signIn,
       signOut,
-      user
+      user,
+      updatePassword
     }),
-    [signIn, signOut, user]
+    [signIn, signOut, updatePassword, user]
   );
 
   return (

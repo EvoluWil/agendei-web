@@ -88,7 +88,7 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
       <Head>
         <title>{capitalize(event.name)} | Agendei</title>
       </Head>
-      {event?.owner?.id === user?.id && (
+      {event?.owner?.id === user?.id && event.active && (
         <>
           <Tooltip title="Editar evento">
             <Fab
@@ -205,7 +205,7 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
           </Tooltip>
           {capitalize(event.name)}
         </Typography>
-        {event?.owner?.id !== user?.id && (
+        {event?.owner?.id !== user?.id && event.active && (
           <Box
             display="flex"
             alignItems="center"
@@ -350,7 +350,6 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
               {event?.reservations?.length >= 3 && (
                 <Typography variant="h5" component="p" color="primary" ml={0.5}>
                   +{event?.reservations?.length - 3}
-                  {event?.limit > 0 && ' / ' + event?.limit}
                 </Typography>
               )}
             </Box>
@@ -364,6 +363,24 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
                 em{' '}
               </Typography>
               {format(new Date(event.createdAt), 'PPp', { locale: ptBR })}
+            </Typography>
+            <Typography
+              pl={2}
+              variant="caption"
+              fontWeight="600"
+              component="span"
+            >
+              {' '}
+              Lotação{' '}
+            </Typography>
+            <Typography variant="caption" color="primary">
+              {event?.limit
+                ? `${
+                    event?.reservations.filter(
+                      reservation => reservation.status === 'APPROVED'
+                    ).length
+                  }/${event?.limit} - Pessoas`
+                : 'Sem limite de pessoas'}
             </Typography>
           </Typography>
         </Grid>

@@ -12,8 +12,12 @@ class UserServiceClass {
     return data;
   }
 
-  async getUser(userId: string) {
-    const { data } = await api.get<User>(`/users/${userId}`);
+  async getUser(userId: string, query: Query) {
+    const { data } = await api.get<User>(`/users/${userId}`, {
+      params: query,
+      paramsSerializer: params => QueryString(params)
+    });
+
     return data;
   }
 

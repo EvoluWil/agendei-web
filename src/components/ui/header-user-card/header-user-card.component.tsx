@@ -10,7 +10,7 @@ import {
   Box
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuth } from '../../../contexts/auth.context';
 import { capitalize } from '../../../utils/formatters/capitalize.util';
 import {
@@ -36,22 +36,10 @@ export const HeaderCardUser: React.FC<UserInformationProps> = ({ mobile }) => {
     setOpen(prevOpen => !prevOpen);
   };
 
-  const { route, push } = useRouter();
-
-  const isPanel = useMemo(() => {
-    if (route.includes('/panel')) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [route]);
+  const { push } = useRouter();
 
   const handleNavigateClick = () => {
-    if (isPanel) {
-      push('/');
-    } else {
-      push('/panel');
-    }
+    push(`/profile/${user?.id}`);
   };
 
   const handleSignOut = () => {
@@ -66,7 +54,7 @@ export const HeaderCardUser: React.FC<UserInformationProps> = ({ mobile }) => {
           <AvatarStyled src={user?.picture}>
             {user?.name[0]?.toUpperCase()}
           </AvatarStyled>
-          <UserName>Meu Painel</UserName>
+          <UserName>Minha Conta</UserName>
         </>
       ) : (
         <>
@@ -89,12 +77,10 @@ export const HeaderCardUser: React.FC<UserInformationProps> = ({ mobile }) => {
             </Button>
           </ButtonGroup>
           <Popper open={open} anchorEl={anchorRef.current} disablePortal>
-            <Paper sx={{ mr: 5, width: isPanel ? '137px' : '120px' }}>
+            <Paper sx={{ mr: 5, width: 120 }}>
               <ClickAwayListener onClickAway={handleToggle}>
                 <MenuList id="split-button-menu">
-                  <MenuItem onClick={handleNavigateClick}>
-                    {isPanel ? 'Voltar ao site' : 'Meu painel'}
-                  </MenuItem>
+                  <MenuItem onClick={handleNavigateClick}>Minha Conta</MenuItem>
                   <MenuItem onClick={handleSignOut}>Sair</MenuItem>
                 </MenuList>
               </ClickAwayListener>

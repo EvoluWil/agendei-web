@@ -52,7 +52,11 @@ export const EventCard: React.FC<EventCardProps> = ({
           {event?.resource?.value ? event?.resource?.value : 'Gratuito'}
           <i className="fa fa-users" style={{ margin: '0 4px 0 8px' }} />
           {event?.resource?.limit
-            ? `${event?.resource?.reservations?.length}/${event?.resource?.limit} - Pessoas`
+            ? `${
+                event?.resource?.reservations.filter(
+                  reservation => reservation.status === 'APPROVED'
+                ).length
+              }/${event?.resource?.limit} - Pessoas`
             : 'Sem limite de pessoas'}
         </Typography>
         <Typography variant="caption" color={current ? 'text.primary' : '#fff'}>
