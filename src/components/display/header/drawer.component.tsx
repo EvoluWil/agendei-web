@@ -28,19 +28,22 @@ export const DrawerComponent: React.FC<NavigationDrawerProps> = ({
       {user ? (
         <Link href={'/panel'} onClick={onClose}>
           <Box
-            bgcolor={theme => theme.palette.primary.main}
+            bgcolor={theme =>
+              route === '/panel' ? theme.palette.primary.main : 'inherit'
+            }
+            color={route === '/panel' ? 'white' : 'primary.main'}
             height={{ xs: 56, md: 64 }}
-            px={2.2}
+            px={2}
             display="flex"
             alignItems="center"
           >
             <Box width={'25%'}>
-              <Typography color="text.secondary">
+              <Typography>
                 <i className="fa fa-sign-in" />
               </Typography>
             </Box>
 
-            <Typography color="text.secondary">Meu Painel</Typography>
+            <Typography>Meu Painel</Typography>
           </Box>
         </Link>
       ) : (
@@ -94,7 +97,7 @@ export const DrawerComponent: React.FC<NavigationDrawerProps> = ({
                     <Typography
                       color={
                         route === item.link && item.name !== 'Sair'
-                          ? 'text.secondary'
+                          ? 'white'
                           : 'primary'
                       }
                     >
@@ -104,7 +107,7 @@ export const DrawerComponent: React.FC<NavigationDrawerProps> = ({
                   <Typography
                     color={
                       route === item.link && item.name !== 'Sair'
-                        ? 'text.secondary'
+                        ? 'white'
                         : 'primary'
                     }
                     variant="body1"

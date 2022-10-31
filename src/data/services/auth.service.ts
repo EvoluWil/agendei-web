@@ -17,7 +17,7 @@ class AuthServiceClass {
 
   async getMe(token: string) {
     const { data } = await api.get<User>('/auth/get-me', {
-      headers: { Authorization: token }
+      headers: { Authorization: `Bearer ${token}` }
     });
     return data;
   }

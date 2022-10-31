@@ -19,6 +19,7 @@ import { DrawerComponent } from './drawer.component';
 import { useAuth } from '../../../contexts/auth.context';
 import { HeaderCardUser } from '../../ui/header-user-card/header-user-card.component';
 import { Button } from '../../ui/button/button.component';
+import { AuthDrawer } from '../../drawer/auth/auth.component';
 
 interface Props {
   children: React.ReactElement;
@@ -51,6 +52,9 @@ const menuItems = [
 export const Header = () => {
   const [backdrop, setBackdrop] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [signInDrawerOpen, setSignInDrawerOpen] = useState<
+    'signIn' | 'signUp' | ''
+  >('');
 
   const { route } = useRouter();
   const { user } = useAuth();
@@ -71,7 +75,11 @@ export const Header = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-
+      <AuthDrawer
+        open={!!signInDrawerOpen}
+        setOpen={() => setSignInDrawerOpen('')}
+        mode={signInDrawerOpen || 'signIn'}
+      />
       <nav id="navbar">
         <HideOnScroll>
           <AppBarComponent elevation={0} position={'sticky'}>
@@ -101,17 +109,21 @@ export const Header = () => {
 
                     <Box display={{ xs: 'none', md: 'flex' }} ml={1}>
                       {!!user ? (
-                        <HeaderCardUser
-                          contrast
-                          picture={user?.picture || ''}
-                          name={user?.name || ''}
-                        />
+                        <HeaderCardUser />
                       ) : (
                         <Box display="flex" alignItems="center" gap={1}>
-                          <Button variant="outlined" size="small">
+                          <Button
+                            onClick={() => setSignInDrawerOpen('signIn')}
+                            variant="outlined"
+                            size="small"
+                          >
                             Entrar
                           </Button>
-                          <Button size="small" sx={{ minWidth: 120 }}>
+                          <Button
+                            onClick={() => setSignInDrawerOpen('signUp')}
+                            size="small"
+                            sx={{ minWidth: 120 }}
+                          >
                             Cadastre-se
                           </Button>
                         </Box>
@@ -123,7 +135,7 @@ export const Header = () => {
                       sx={{ display: { md: 'none' } }}
                       onClick={handleDrawerToggle}
                     >
-                      <Typography color="white">
+                      <Typography color="primary.main">
                         <i className="fa fa-bars" />
                       </Typography>
                     </IconButton>

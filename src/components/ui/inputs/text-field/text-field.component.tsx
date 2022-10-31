@@ -12,16 +12,15 @@ export interface TextFieldStyledProps extends OutlinedTextFieldPropsEdit {
   control?: Control;
   name: string;
   icon?: JSX.Element;
-  watch?: (value: any) => void;
+  helperText?: any;
 }
 export const TextField: React.FC<TextFieldStyledProps> = ({
   control,
-  helperText = '',
+  helperText,
   defaultValue,
   label,
   name,
   icon,
-  watch,
   onChange,
   value,
   type,
@@ -59,11 +58,9 @@ export const TextField: React.FC<TextFieldStyledProps> = ({
                     sx={{ color: '#B4B4C1' }}
                   >
                     {viewPassword ? (
-                      <i className="material-symbols-outlined">
-                        visibility_off
-                      </i>
+                      <i className="material-icons">visibility_off</i>
                     ) : (
-                      <i className="material-symbols-outlined">visibility</i>
+                      <i className="material-icons">visibility</i>
                     )}
                   </IconButton>
                 </InputAdornment>

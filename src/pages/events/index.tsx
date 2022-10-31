@@ -151,7 +151,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        flexDirection={{ md: 'row', sm: 'column' }}
+        flexDirection={{ md: 'row', xs: 'column' }}
         my={2}
       >
         <Typography variant="h4" component="h2">
@@ -161,17 +161,13 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
           display="flex"
           alignItems="center"
           justifyContent="flex-end"
+          flexDirection={{ md: 'row', xs: 'column' }}
+          mt={{ md: 0, xs: 2 }}
           gap={1}
           width={'100%'}
           maxWidth={600}
         >
           <SearchInput onChange={setSearch} label="Buscar evento" />
-          <Button
-            sx={{ width: 'auto' }}
-            startIcon={<i className="fa fa-plus" />}
-          >
-            Criar Evento
-          </Button>
         </Box>
       </Box>
       <Grid container>

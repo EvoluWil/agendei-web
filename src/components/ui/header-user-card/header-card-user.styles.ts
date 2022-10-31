@@ -1,10 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Avatar } from '@mui/material';
 
-interface ContrastProps {
-  contrast?: string;
-}
-
 export const UserInformationContainer = styled('div')`
   display: flex;
   align-items: center;
@@ -12,11 +8,8 @@ export const UserInformationContainer = styled('div')`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const UserName = styled('div')<ContrastProps>`
-  color: ${({ theme, contrast }) =>
-    contrast
-      ? theme.palette.getContrastText(theme.palette.primary.main)
-      : theme.palette.primary.main};
+export const UserName = styled('div')`
+  color: ${({ theme }) => theme.palette.text.primary};
   font-size: ${({ theme }) => theme.typography.body2.fontSize};
 
   ${({ theme }) => theme.breakpoints.down('sm')} {
@@ -26,20 +19,14 @@ export const UserName = styled('div')<ContrastProps>`
   }
 `;
 
-export const AvatarStyled = styled(Avatar)<ContrastProps>`
+export const AvatarStyled = styled(Avatar)`
   width: 30px;
   height: initial;
   aspect-ratio: 1;
   font-weight: normal;
-  background-color: ${({ theme, contrast }) =>
-    contrast
-      ? theme.palette.getContrastText(theme.palette.primary.main)
-      : theme.palette.primary.main};
-
-  color: ${({ theme, contrast }) =>
-    contrast
-      ? theme.palette.primary.main
-      : theme.palette.getContrastText(theme.palette.primary.main)};
+  background-color: ${({ theme }) => theme.palette.primary.main};
+  color: ${({ theme }) =>
+    theme.palette.getContrastText(theme.palette.primary.main)};
 
   .MuiSvgIcon-root {
     margin: 0 auto;

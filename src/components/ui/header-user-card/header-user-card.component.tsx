@@ -6,7 +6,8 @@ import {
   MenuList,
   Paper,
   Popper,
-  Typography
+  Typography,
+  Box
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useMemo, useRef, useState } from 'react';
@@ -19,22 +20,17 @@ import {
 } from './header-card-user.styles';
 
 interface UserInformationProps {
-  picture: string;
-  name: string;
   onClick?: () => void;
   mobile?: boolean;
-  contrast?: boolean;
 }
 
-export const HeaderCardUser: React.FC<UserInformationProps> = ({
-  name,
-  picture,
-  mobile,
-  contrast
-}) => {
+export const HeaderCardUser: React.FC<UserInformationProps> = ({ mobile }) => {
   const [open, setOpen] = useState(false);
-  const { signOut } = useAuth();
+
   const anchorRef = useRef<HTMLDivElement>(null);
+
+  const { signOut } = useAuth();
+  const { user } = useAuth();
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -67,25 +63,28 @@ export const HeaderCardUser: React.FC<UserInformationProps> = ({
     <UserInformationContainer>
       {mobile ? (
         <>
-          <AvatarStyled src={picture}>{name[0]?.toUpperCase()}</AvatarStyled>
+          <AvatarStyled src={user?.picture}>
+            {user?.name[0]?.toUpperCase()}
+          </AvatarStyled>
           <UserName>Meu Painel</UserName>
         </>
       ) : (
         <>
-          <AvatarStyled src={picture} contrast={contrast?.toString()}>
+          <AvatarStyled src={user?.picture}>
             <Typography sx={{ mx: 'auto' }}>
-              {name[0]?.toUpperCase()}
+              {user?.name[0]?.toUpperCase()}
             </Typography>
           </AvatarStyled>
-          <UserName contrast={contrast?.toString()}>
-            {capitalize(name)}
-          </UserName>
+          <Box>
+            <Typography variant="body2" color="text.primary" mb={-1}>
+              {capitalize(user?.name || '')}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {user?.email}
+            </Typography>
+          </Box>
           <ButtonGroup variant="text" ref={anchorRef}>
-            <Button
-              size="small"
-              onClick={handleToggle}
-              color={contrast ? 'inherit' : 'primary'}
-            >
+            <Button size="small" onClick={handleToggle} color="primary">
               <i className="material-icons">expand_more</i>
             </Button>
           </ButtonGroup>

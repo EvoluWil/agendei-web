@@ -25,6 +25,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.38.0",
+    "react-toastify": "^9.0.8",
     "yarn": "^1.22.19",
     "yup": "^0.32.11"
   },
