@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material';
 import { Query } from 'nestjs-prisma-querybuilder-interface';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -13,6 +14,7 @@ import { EmptyData } from '../../components/ui/empty-data/empty-data.component';
 import { EventCard } from '../../components/ui/event-card/event-card.component';
 import { TextField } from '../../components/ui/inputs/text-field/text-field.component';
 import { ReservationCard } from '../../components/ui/reservation-card/reservation-card';
+import { useAuth } from '../../contexts/auth.context';
 import { useUser } from '../../contexts/user.context';
 import { User } from '../../data/models/user.model';
 import { UserService } from '../../data/services/user.service';
@@ -76,6 +78,8 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
   const [updatePasswordDrawer, setUpdatePasswordDrawer] = useState(false);
 
   const { updateUser, deleteUser } = useUser();
+  const { push } = useRouter();
+  const { signOut } = useAuth();
 
   const {
     control,
@@ -103,6 +107,8 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
       setLoading(true);
       await deleteUser(user?.id || '');
       NestSuccess('Usuário removido com sucesso');
+      signOut();
+      push('/events');
       setLoading(false);
     } catch (err) {
       setLoading(false);
