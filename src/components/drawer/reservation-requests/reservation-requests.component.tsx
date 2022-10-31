@@ -16,6 +16,10 @@ import { useReservation } from '../../../contexts/reservation.context';
 import { Reservation } from '../../../data/models/reservation.model';
 import { RequestCardUser } from '../../ui/request-card-user/request-card-user.component';
 import { EmptyData } from '../../ui/empty-data/empty-data.component';
+import {
+  NestError,
+  NestSuccess
+} from '../../../utils/formatters/format-nest.util';
 
 interface ReservationRequestDrawerProps {
   open: boolean;
@@ -37,8 +41,17 @@ export const ReservationRequestDrawer: React.FC<
     reservationId: string,
     status: 'APPROVED' | 'REJECTED'
   ) => {
-    await updateStatus(reservationId, status);
-    onSubmit && onSubmit();
+    try {
+      setLoading(true);
+      await updateStatus(reservationId, status);
+      NestSuccess('Solicitação enviada com sucesso');
+      setOpen();
+      onSubmit && onSubmit();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      NestError(err);
+    }
   };
 
   const handleClose = () => {

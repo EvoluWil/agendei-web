@@ -1854,10 +1854,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-nestjs-prisma-querybuilder-interface@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/nestjs-prisma-querybuilder-interface/-/nestjs-prisma-querybuilder-interface-1.0.4.tgz#71c6714f086bf3099b624e2239931e15be7bb9bd"
-  integrity sha512-qg1k76fTup6WpvFKaDKNthvl5BD8zywTAQ0k72gy0nSIThAPM99bn4RGCoGbi6OiP7EhnLpLs5u+WQLvx+qJNA==
+nestjs-prisma-querybuilder-interface@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/nestjs-prisma-querybuilder-interface/-/nestjs-prisma-querybuilder-interface-0.1.1.tgz#2a9b6a31d8b7c1c77025dd9ef5c5fc8fcd7083b2"
+  integrity sha512-BRIf680uFw1g3NCGV3FydJRqB9JGj2rX3eHy6+q9uivg6Qzo7L0vUrio//2xler2rNpql7Dpbkvxh7O1yK8vYg==
   dependencies:
     qs "^6.10.3"
 

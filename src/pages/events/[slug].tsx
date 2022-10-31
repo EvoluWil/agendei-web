@@ -1,11 +1,8 @@
-import { ServerResponse, IncomingMessage } from 'http';
 import {
   Avatar,
   Box,
   Grid,
   Typography,
-  Container,
-  Divider,
   Tooltip,
   Fab,
   IconButton
@@ -30,6 +27,10 @@ import { ReservationRequestDrawer } from '../../components/drawer/reservation-re
 import { ReservationStatusDrawer } from '../../components/drawer/reservation-status/reservation-status.component';
 import { useRouter } from 'next/router';
 import Dialog from '../../components/ui/dialog/dialog.component';
+import {
+  NestError,
+  NestSuccess
+} from '../../utils/formatters/format-nest.util';
 
 const query: Query = {
   select:
@@ -64,23 +65,34 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
     try {
       setLoading(true);
       await createReservation(event.id, user?.id || '');
+      NestSuccess('Solicitação enviada com sucesso');
       setLoading(false);
     } catch (err) {
+      NestError(err);
       setLoading(false);
-      console.log(err);
     }
   };
 
   const onEditEvent = async () => {
-    const updatedEvent = await getEvent(event.slug, query);
-    setEvent(updatedEvent);
+    try {
+      const updatedEvent = await getEvent(event.slug, query);
+      setEvent(updatedEvent);
+    } catch (err) {
+      NestError(err);
+    }
   };
 
   const handleCancelEvent = async () => {
-    setLoading(true);
-    await deleteEvent(event.id);
-    push('/events');
-    setLoading(false);
+    try {
+      setLoading(true);
+      await deleteEvent(event.id);
+      push('/events');
+      NestSuccess('Evento cancelado com sucesso');
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      NestError(err);
+    }
   };
 
   return (
@@ -330,7 +342,6 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
             <Box display="flex" alignItems="center">
               {event?.reservations
                 ?.filter(reservation => reservation.status === 'APPROVED')
-                .filter((_r, index) => index < 3)
                 .map((reservation, index) => (
                   <Tooltip key={reservation.id} title={reservation?.user?.name}>
                     <Avatar
@@ -346,12 +357,6 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
                     </Avatar>
                   </Tooltip>
                 ))}
-
-              {event?.reservations?.length >= 3 && (
-                <Typography variant="h5" component="p" color="primary" ml={0.5}>
-                  +{event?.reservations?.length - 3}
-                </Typography>
-              )}
             </Box>
           </Box>
           <Typography variant="caption" component="p" fontWeight="600" ml={0.5}>

@@ -7,6 +7,10 @@ import { Button } from '../../ui/button/button.component';
 import { BaseDrawer } from '../base-drawer/base-drawer.component';
 import { useState } from 'react';
 import { useAuth } from '../../../contexts/auth.context';
+import {
+  NestError,
+  NestSuccess
+} from '../../../utils/formatters/format-nest.util';
 
 const updatePasswordValidation = yup.object().shape({
   oldPassword: yup.string().required('Senha atual é obrigatória'),
@@ -39,9 +43,15 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({
   });
 
   const handleUpdatePassword = async (data: FieldValues) => {
-    setLoading(true);
-    await updatePassword(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      await updatePassword(data);
+      NestSuccess('Senha atualizada com sucesso');
+      setLoading(false);
+    } catch (err) {
+      NestError(err);
+      setLoading(false);
+    }
   };
 
   return (

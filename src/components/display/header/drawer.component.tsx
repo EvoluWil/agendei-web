@@ -25,13 +25,15 @@ export const DrawerComponent: React.FC<NavigationDrawerProps> = ({
   const { route } = useRouter();
   return (
     <Drawer anchor="right" open={open} variant="temporary" onClose={onClose}>
-      {user ? (
-        <Link href={'/panel'} onClick={onClose}>
+      {user && (
+        <Link href={`/profile/${user?.id}`} onClick={onClose}>
           <Box
             bgcolor={theme =>
-              route === '/panel' ? theme.palette.primary.main : 'inherit'
+              route.includes('/profile')
+                ? theme.palette.primary.main
+                : 'inherit'
             }
-            color={route === '/panel' ? 'white' : 'primary.main'}
+            color={route.includes('/profile') ? 'white' : 'primary.main'}
             height={{ xs: 56, md: 64 }}
             px={2}
             display="flex"
@@ -43,82 +45,66 @@ export const DrawerComponent: React.FC<NavigationDrawerProps> = ({
               </Typography>
             </Box>
 
-            <Typography>Meu Painel</Typography>
-          </Box>
-        </Link>
-      ) : (
-        <Link href={'/signIn'} onClick={onClose}>
-          <Box
-            bgcolor={theme => theme.palette.primary.main}
-            height={{ xs: 56, md: 64 }}
-            px={2}
-            display="flex"
-            alignItems="center"
-          >
-            <Box width={'25%'}>
-              <Typography color="text.secondary">
-                <i className="fa fa-sign-in" />
-              </Typography>
-            </Box>
-
-            <Typography color="text.secondary">Entrar</Typography>
+            <Typography>Minha Conta</Typography>
           </Box>
         </Link>
       )}
       <Divider />
       <List disablePadding>
-        {menuItems.map(
-          item =>
-            (item.name !== 'Sair' || !!user) && (
-              <Link
-                key={item.name}
-                href={item.link}
-                onClick={() => {
-                  if (item?.signOut) {
-                    signOut();
-                  }
-                  onClose();
-                }}
-              >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  px={2}
-                  py={1}
-                  width={160}
-                  bgcolor={theme =>
-                    route === item.link && item.name !== 'Sair'
-                      ? theme.palette.primary.main
-                      : 'inherit'
-                  }
+        {menuItems
+          .filter(item => user || !item?.auth)
+          .map(
+            item =>
+              (item.name !== 'Sair' || !!user) && (
+                <Link
+                  key={item.name}
+                  href={item.link}
+                  onClick={() => {
+                    if (item?.signOut) {
+                      signOut();
+                    }
+                    onClose();
+                  }}
                 >
-                  <Box width={'20%'}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    px={2}
+                    py={1}
+                    width={160}
+                    bgcolor={theme =>
+                      route === item.link && item.name !== 'Sair'
+                        ? theme.palette.primary.main
+                        : 'inherit'
+                    }
+                  >
+                    <Box width={'20%'}>
+                      <Typography
+                        color={
+                          route === item.link && item.name !== 'Sair'
+                            ? 'white'
+                            : 'primary'
+                        }
+                      >
+                        {item.icon}
+                      </Typography>
+                    </Box>
                     <Typography
                       color={
                         route === item.link && item.name !== 'Sair'
                           ? 'white'
                           : 'primary'
                       }
+                      variant="body1"
+                      mr={'auto'}
                     >
-                      {item.icon}
+                      {item.name}
                     </Typography>
                   </Box>
-                  <Typography
-                    color={
-                      route === item.link && item.name !== 'Sair'
-                        ? 'white'
-                        : 'primary'
-                    }
-                    variant="body1"
-                    mr={'auto'}
-                  >
-                    {item.name}
-                  </Typography>
-                </Box>
-              </Link>
-            )
-        )}
+                </Link>
+              )
+          )}
       </List>
     </Drawer>
   );

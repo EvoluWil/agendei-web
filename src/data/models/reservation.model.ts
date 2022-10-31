@@ -12,3 +12,10 @@ export interface Reservation {
   user: User;
   event: IEvent;
 }
+
+export const ReservationStatusLabel = {
+  APPROVED: { label: 'Aprovada', color: 'success.main' },
+  CANCELED: { label: 'Cancelada', color: 'grey.400' },
+  REJECTED: { label: 'Rejeitada', color: 'error.main' },
+  PENDING: { label: 'Pendente', color: 'white' }
+};

@@ -21,7 +21,15 @@ export const Button: React.FC<ButtonProps> = ({
       {...rest}
     >
       {loading ? (
-        <CircularProgress sx={{ color: '#fff', display: 'flex', height: 36 }} />
+        <CircularProgress
+          sx={{
+            '&.MuiCircularProgress-root': {
+              minHeight: 20,
+              height: '20px !important',
+              width: '20px !important'
+            }
+          }}
+        />
       ) : (
         children
       )}

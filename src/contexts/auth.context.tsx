@@ -1,4 +1,4 @@
-import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { getCookie, setCookie, removeCookies } from 'cookies-next';
 import {
   createContext,
   ReactNode,
@@ -55,7 +55,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const signOut = useCallback(() => {
-    deleteCookie('agendei:token');
+    removeCookies('@agendei:token');
     setUser(null);
   }, []);
 

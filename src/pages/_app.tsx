@@ -1,5 +1,7 @@
 import { ThemeProvider, Container } from '@mui/material';
 import type { AppProps } from 'next/app';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FooterDynamic } from '../components/display/footer/footer.dynamic';
 import { Header } from '../components/display/header/header.component';
 import { AuthProvider } from '../contexts/auth.context';
@@ -17,6 +19,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
           <EventProvider>
             <ReservationProvider>
               <GlobalStyles />
+              <ToastContainer autoClose={5000} closeOnClick />
               <Header />
               <Container
                 sx={{

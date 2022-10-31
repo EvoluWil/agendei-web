@@ -38,14 +38,15 @@ const HideOnScroll = (props: Props) => {
 
 const menuItems = [
   {
-    link: '/',
-    name: 'Inicio',
-    icon: <i className="fa fa-home" />
-  },
-  {
     link: '/events',
     name: 'Eventos',
-    icon: <i className="fa fa-briefcase" />
+    icon: <i className="fa fa-calendar" />
+  },
+  {
+    link: '/reports',
+    name: 'Relatórios',
+    icon: <i className="fa fa-briefcase" />,
+    auth: true
   }
 ];
 
@@ -90,22 +91,26 @@ export const Header = () => {
                 </Link>
                 <Box ml="auto">
                   <Box display="flex" alignItems="center" gap={1}>
-                    {menuItems.map(item => (
-                      <Box
-                        display={{ xs: 'none', md: 'inline' }}
-                        key={item.name}
-                      >
-                        <AnimatedLink
-                          onClick={() => {
-                            if (route !== item.link) setBackdrop(true);
-                          }}
-                          className={route === item.link ? 'active' : 'inative'}
-                          href={item.link}
+                    {menuItems
+                      .filter(item => user || !item?.auth)
+                      .map(item => (
+                        <Box
+                          display={{ xs: 'none', md: 'inline' }}
+                          key={item.name}
                         >
-                          {item.name}
-                        </AnimatedLink>
-                      </Box>
-                    ))}
+                          <AnimatedLink
+                            onClick={() => {
+                              if (route !== item.link) setBackdrop(true);
+                            }}
+                            className={
+                              route === item.link ? 'active' : 'inative'
+                            }
+                            href={item.link}
+                          >
+                            {item.name}
+                          </AnimatedLink>
+                        </Box>
+                      ))}
 
                     <Box display={{ xs: 'none', md: 'flex' }} ml={1}>
                       {!!user ? (
@@ -129,6 +134,29 @@ export const Header = () => {
                         </Box>
                       )}
                     </Box>
+                    {!user && (
+                      <Box
+                        alignItems="center"
+                        gap={1}
+                        sx={{ display: { md: 'none', xs: 'flex' } }}
+                      >
+                        <Button
+                          onClick={() => setSignInDrawerOpen('signIn')}
+                          variant="outlined"
+                          size="small"
+                        >
+                          Entrar
+                        </Button>
+                        <Button
+                          onClick={() => setSignInDrawerOpen('signUp')}
+                          size="small"
+                          sx={{ minWidth: 120 }}
+                        >
+                          Cadastre-se
+                        </Button>
+                      </Box>
+                    )}
+
                     <IconButton
                       aria-label="Open Navigation"
                       size="large"

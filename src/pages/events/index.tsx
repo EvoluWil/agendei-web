@@ -1,51 +1,36 @@
-import {
-  Avatar,
-  Box,
-  Grid,
-  Typography,
-  Container,
-  Divider,
-  Tooltip,
-  Fab
-} from '@mui/material';
-import { format, sub, startOfMonth, add, endOfMonth } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import {
-  FiltersFields,
-  Query,
-  QueryString
-} from 'nestjs-prisma-querybuilder-interface';
-import { GetServerSideProps, GetStaticProps } from 'next';
+import { Box, Divider, Fab, Grid, Tooltip, Typography } from '@mui/material';
+import { add, endOfMonth, startOfMonth, sub } from 'date-fns';
+import { FiltersFields, Query } from 'nestjs-prisma-querybuilder-interface';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { useState, useEffect, use, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CreateEventDrawer } from '../../components/drawer/create-event/create-event.component';
-import { Button } from '../../components/ui/button/button.component';
 import { Calendar } from '../../components/ui/calendar/calendar.component';
 import { EmptyData } from '../../components/ui/empty-data/empty-data.component';
 import { EventCard } from '../../components/ui/event-card/event-card.component';
 import { SearchInput } from '../../components/ui/inputs/serach-input/search-input.component';
+import { useAuth } from '../../contexts/auth.context';
 import { useEvent } from '../../contexts/event.context';
 import { IEvent } from '../../data/models/event.model';
 import { formatEventsToCalendar } from '../../utils/formatters/format-events-calendar.util';
+import { NestError } from '../../utils/formatters/format-nest.util';
 
 const query: Query = {
   select:
     'id name startDate endDate limit picture value reservations active slug',
+  operator: 'and',
   filter: [
     {
-      and: [
-        {
-          startDate: {
-            gte: sub(startOfMonth(new Date()), { days: 7 }).toISOString()
-          }
-        },
-        {
-          startDate: {
-            lte: add(endOfMonth(new Date()), { days: 7 }).toISOString()
-          }
-        }
-      ]
+      path: 'startDate',
+      value: sub(startOfMonth(new Date()), { days: 7 }).toISOString(),
+      type: 'date',
+      operator: 'gte'
+    },
+    {
+      path: 'startDate',
+      value: add(endOfMonth(new Date()), { days: 7 }).toISOString(),
+      type: 'date',
+      operator: 'lte'
     }
   ]
 };
@@ -58,35 +43,48 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [search, setSearch] = useState('');
 
-  const { push } = useRouter();
   const { getEvents } = useEvent();
+  const { user } = useAuth();
 
   const getData = useCallback(
     async (query: Query) => {
-      const data = await getEvents(query);
-      setEvents(formatEventsToCalendar(data));
+      try {
+        const data = await getEvents(query);
+        setEvents(formatEventsToCalendar(data));
+      } catch (err) {
+        NestError(err);
+      }
     },
     [getEvents]
   );
 
   const handleFilter = (term: string) => {
     if (term) {
-      const filter: FiltersFields = [{ name: { contains: term } }];
+      const filter: FiltersFields[] = [
+        {
+          path: 'name',
+          value: term,
+          type: 'string',
+          operator: 'contains'
+        }
+      ];
       getData({ ...query, filter });
     }
   };
 
   const handleMonthChange = async (date: Date) => {
-    const filter: FiltersFields = [
+    const filter: FiltersFields[] = [
       {
-        startDate: {
-          gte: sub(startOfMonth(new Date(date)), { days: 7 }).toISOString()
-        }
+        path: 'startDate',
+        value: sub(startOfMonth(new Date(date)), { days: 7 }).toISOString(),
+        type: 'date',
+        operator: 'gte'
       },
       {
-        startDate: {
-          lte: add(endOfMonth(new Date(date)), { days: 7 }).toISOString()
-        }
+        path: 'startDate',
+        value: add(endOfMonth(new Date(date)), { days: 7 }).toISOString(),
+        type: 'date',
+        operator: 'lte'
       }
     ];
     getData({ ...query, filter });
@@ -101,21 +99,22 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
       <Head>
         <title>Eventos | Agendei</title>
       </Head>
-      <Tooltip title="Criar evento">
-        <Fab
-          color="primary"
-          onClick={() => setCreateEventOpen(true)}
-          sx={{
-            position: 'fixed',
-            right: 0,
-            borderRadius: '20px 0 0 20px',
-            top: '90px'
-          }}
-        >
-          <i className="fa fa-calendar-plus-o fa-2x" />
-        </Fab>
-      </Tooltip>
-
+      {!!user && (
+        <Tooltip title="Criar evento">
+          <Fab
+            color="primary"
+            onClick={() => setCreateEventOpen(true)}
+            sx={{
+              position: 'fixed',
+              right: 0,
+              borderRadius: '20px 0 0 20px',
+              top: '90px'
+            }}
+          >
+            <i className="fa fa-calendar-plus-o fa-2x" />
+          </Fab>
+        </Tooltip>
+      )}
       <CreateEventDrawer
         open={createEventOpen}
         setOpen={() => setCreateEventOpen(false)}

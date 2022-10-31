@@ -77,7 +77,7 @@ export const HeaderCardUser: React.FC<UserInformationProps> = ({ mobile }) => {
             </Button>
           </ButtonGroup>
           <Popper open={open} anchorEl={anchorRef.current} disablePortal>
-            <Paper sx={{ mr: 5, width: 120 }}>
+            <Paper sx={{ mr: 5, width: 136 }}>
               <ClickAwayListener onClickAway={handleToggle}>
                 <MenuList id="split-button-menu">
                   <MenuItem onClick={handleNavigateClick}>Minha Conta</MenuItem>

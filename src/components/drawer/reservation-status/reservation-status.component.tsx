@@ -7,6 +7,10 @@ import { BaseDrawer } from '../base-drawer/base-drawer.component';
 import { Reservation } from '../../../data/models/reservation.model';
 import { useReservation } from '../../../contexts/reservation.context';
 import { ReservationStatusCard } from '../../ui/reservation-status-card/reservation-status-card';
+import {
+  NestError,
+  NestSuccess
+} from '../../../utils/formatters/format-nest.util';
 
 interface ReservationStatusDrawerProps {
   open: boolean;
@@ -19,15 +23,12 @@ export const ReservationStatusDrawer: React.FC<
   ReservationStatusDrawerProps
 > = ({ open, setOpen, reservationId }) => {
   const [reservation, setReservation] = useState<Reservation | null>(null);
-  const [loading, setLoading] = useState(false);
-
   const { getReservation, cancelReservation } = useReservation();
   const { push } = useRouter();
 
   const handleClose = () => {
     setOpen();
     setReservation(null);
-    setLoading(false);
   };
 
   const getData = useCallback(async () => {
@@ -46,10 +47,11 @@ export const ReservationStatusDrawer: React.FC<
   const handleCancel = async () => {
     try {
       await cancelReservation(reservationId);
+      NestSuccess('Reserva cancelada com sucesso');
       handleClose();
       push('/events');
     } catch (err) {
-      console.log(err);
+      NestError(err);
     }
   };
 

@@ -11,6 +11,10 @@ import { Button } from '../../ui/button/button.component';
 import { DatePicker } from '../../ui/inputs/date-picker/date-picker.component';
 import { useEvent } from '../../../contexts/event.context';
 import { useRouter } from 'next/router';
+import {
+  NestError,
+  NestSuccess
+} from '../../../utils/formatters/format-nest.util';
 
 const CreateEventValidation = yup.object().shape({
   name: yup.string().required('Nome é obrigatório'),
@@ -78,11 +82,13 @@ export const CreateEventDrawer: React.FC<CreateEventDrawerProps> = ({
     try {
       setLoading(true);
       await updateEvent(`${event?.id}`, data);
+      NestSuccess('Evento criado com sucesso');
+      setOpen();
       onSubmit && onSubmit();
       setLoading(false);
     } catch (err) {
+      NestError(err);
       setLoading(false);
-      console.log(err);
     }
   };
 

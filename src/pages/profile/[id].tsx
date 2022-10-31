@@ -1,26 +1,27 @@
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Grid, Menu, MenuItem, Typography, useTheme } from '@mui/material';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { FieldValues } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { User } from '../../data/models/user.model';
-import { useUser } from '../../contexts/user.context';
-import { useAuth } from '../../contexts/auth.context';
-import { Button } from '../../components/ui/button/button.component';
-import { TextField } from '../../components/ui/inputs/text-field/text-field.component';
-import { EmptyData } from '../../components/ui/empty-data/empty-data.component';
-import { UserService } from '../../data/services/user.service';
-import { GetServerSideProps } from 'next';
-import { setTokenSsr } from '../../utils/functions/set-token-ssr.util';
+import { Box, Grid, Typography } from '@mui/material';
 import { Query } from 'nestjs-prisma-querybuilder-interface';
-import { EventCard } from '../../components/ui/event-card/event-card.component';
-import { formatEventsToCalendar } from '../../utils/formatters/format-events-calendar.util';
-import { ReservationCard } from '../../components/ui/reservation-card/reservation-card';
-import Dialog from '../../components/ui/dialog/dialog.component';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import { useState } from 'react';
+import { FieldValues, useForm } from 'react-hook-form';
+import * as yup from 'yup';
 import { UpdatePassword } from '../../components/drawer/update-password/update-password';
+import { Button } from '../../components/ui/button/button.component';
+import Dialog from '../../components/ui/dialog/dialog.component';
+import { EmptyData } from '../../components/ui/empty-data/empty-data.component';
+import { EventCard } from '../../components/ui/event-card/event-card.component';
+import { TextField } from '../../components/ui/inputs/text-field/text-field.component';
+import { ReservationCard } from '../../components/ui/reservation-card/reservation-card';
+import { useUser } from '../../contexts/user.context';
+import { User } from '../../data/models/user.model';
+import { UserService } from '../../data/services/user.service';
+import { formatEventsToCalendar } from '../../utils/formatters/format-events-calendar.util';
+import {
+  NestError,
+  NestSuccess
+} from '../../utils/formatters/format-nest.util';
+import { setTokenSsr } from '../../utils/functions/set-token-ssr.util';
 
 const userDetail = yup.object().shape({
   email: yup
@@ -86,15 +87,27 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
   });
 
   const handleUpdateUser = async (data: FieldValues) => {
-    setLoading(true);
-    await updateUser(user?.id || '', data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      await updateUser(user?.id || '', data);
+      setLoading(false);
+      NestSuccess('Atualizado com sucesso');
+    } catch (err) {
+      setLoading(false);
+      NestError(err);
+    }
   };
 
   const handleDeleteUser = async () => {
-    setLoading(true);
-    await deleteUser(user?.id || '');
-    setLoading(false);
+    try {
+      setLoading(true);
+      await deleteUser(user?.id || '');
+      NestSuccess('Usuário removido com sucesso');
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      NestError(err);
+    }
   };
 
   const handleCancelUpdateUser = async () => {
@@ -106,6 +119,10 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
 
   return (
     <>
+      <Head>
+        <title>Minha Conta | Agendei</title>
+      </Head>
+
       <UpdatePassword
         open={updatePasswordDrawer}
         setOpen={() => setUpdatePasswordDrawer(false)}

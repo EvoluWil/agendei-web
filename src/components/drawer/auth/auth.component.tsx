@@ -5,6 +5,10 @@ import { SignIn } from './sign-in.component';
 import { SignUp } from './sign-up.component';
 import { FieldValues } from 'react-hook-form';
 import { useUser } from '../../../contexts/user.context';
+import {
+  NestError,
+  NestSuccess
+} from '../../../utils/formatters/format-nest.util';
 
 interface AuthDrawerProps {
   open: boolean;
@@ -27,20 +31,25 @@ export const AuthDrawer: React.FC<AuthDrawerProps> = ({
     setLoading(true);
     try {
       await signIn(email, password);
+      setOpen();
+      setLoading(false);
     } catch (err) {
+      NestError(err);
       setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSignUp = async (data: FieldValues) => {
     setLoading(true);
     try {
       await createUser(data);
+      NestSuccess('Cadastro realizado com sucesso');
+      setLoading(false);
+      setOpen();
     } catch (err) {
       setLoading(false);
+      NestError(err);
     }
-    setLoading(false);
   };
 
   const handleChangeMode = () => {
