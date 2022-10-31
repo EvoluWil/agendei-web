@@ -7,7 +7,7 @@ class UserServiceClass {
   async getUsers(query: Query) {
     const { data } = await api.get<User[]>('/users', {
       params: query,
-      paramsSerializer: { encode: params => QueryString(params) }
+      paramsSerializer: params => QueryString(params)
     });
     return data;
   }

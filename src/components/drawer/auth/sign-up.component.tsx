@@ -6,8 +6,17 @@ import { TextField } from '../../ui/inputs/text-field/text-field.component';
 import { Button } from '../../ui/button/button.component';
 
 const SignUpValidation = yup.object().shape({
+  name: yup
+    .string()
+    .required('Nome é obrigatório')
+    .matches(/^[a-zA-Z\s]/, 'Nome invalido')
+    .matches(/^[a-zA-Z\s]+\s+[a-zA-Z]/, 'Nome precisa ter sobrenome'),
   email: yup.string().required('E-mail é obrigatório').email('E-mail inválido'),
-  password: yup.string().required('Senha é obrigatória')
+  password: yup.string().required('Senha é obrigatória'),
+  passwordConfirmation: yup
+    .string()
+    .required('Confirmação de senha é obrigatória')
+    .oneOf([yup.ref('password'), null], 'As senhas devem corresponder')
 });
 
 interface SignUpProps {
@@ -30,6 +39,7 @@ export const SignUp: React.FC<SignUpProps> = ({
   });
 
   const handleSignIn = async (data: FieldValues) => {
+    delete data.passwordConfirmation;
     onSubmit(data);
   };
 
@@ -78,10 +88,10 @@ export const SignUp: React.FC<SignUpProps> = ({
       />
       <TextField
         label="Confirma a Senha"
-        name={'password'}
+        name={'passwordConfirmation'}
         type="password"
         control={control}
-        helperText={errors?.password?.message}
+        helperText={errors?.passwordConfirmation?.message}
       />
       <Box width="100%">
         <Button

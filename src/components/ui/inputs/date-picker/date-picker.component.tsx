@@ -46,7 +46,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           maxDateTime={maxDateTime}
           minDateTime={minDateTime}
           label={label}
-          inputFormat={'dd/MM/yyyy hh:mm'}
+          ampm={false}
+          inputFormat={'dd/MM/yyyy kk:mm'}
           value={field.value}
           onChange={field.onChange}
           renderInput={params => (

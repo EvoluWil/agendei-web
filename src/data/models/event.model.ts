@@ -1,4 +1,9 @@
+import { Reservation } from './reservation.model';
+import { User } from './user.model';
+
 export interface IEvent {
+  owner: User;
+  reservations: Reservation[];
   id: string;
   slug: string;
   name: string;

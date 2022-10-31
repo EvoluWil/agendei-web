@@ -4,7 +4,9 @@ import {
   Grid,
   Typography,
   Container,
-  Divider
+  Divider,
+  Tooltip,
+  Fab
 } from '@mui/material';
 import { format, sub, startOfMonth, add, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -13,101 +15,35 @@ import {
   Query,
   QueryString
 } from 'nestjs-prisma-querybuilder-interface';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect, use, useCallback } from 'react';
+import { CreateEventDrawer } from '../../components/drawer/create-event/create-event.component';
 import { Button } from '../../components/ui/button/button.component';
 import { Calendar } from '../../components/ui/calendar/calendar.component';
+import { EmptyData } from '../../components/ui/empty-data/empty-data.component';
 import { EventCard } from '../../components/ui/event-card/event-card.component';
 import { SearchInput } from '../../components/ui/inputs/serach-input/search-input.component';
+import { useEvent } from '../../contexts/event.context';
 import { IEvent } from '../../data/models/event.model';
-import { EventService } from '../../data/services/event.service';
 import { formatEventsToCalendar } from '../../utils/formatters/format-events-calendar.util';
 
-const mockEvents = [
-  {
-    id: '1',
-    slug: 'Evento',
-    name: 'evento',
-    startDate: new Date(),
-    endDate: add(new Date(), { days: 2 }),
-    active: true,
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis fugiat est aperiam corrupti nam cupiditate blanditiis, unde architecto pariatur hic veniam molestias, omnis porro laborum, nostrum ipsa inventore iusto. Distinctio!',
-    address: 'rua 1',
-    state: 'estado',
-    district: 'bairro',
-    city: 'cidade',
-    value: 0,
-    limit: 5,
-    picture: 'https://thispersondoesnotexist.com/image',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ownerId: '1'
-  },
-  {
-    id: '12',
-    slug: 'Evento2',
-    name: 'evento2',
-    startDate: add(new Date(), { days: 9 }),
-    endDate: add(new Date(), { days: 12 }),
-    active: true,
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis fugiat est aperiam corrupti nam cupiditate blanditiis, unde architecto pariatur hic veniam molestias, omnis porro laborum, nostrum ipsa inventore iusto. Distinctio!',
-    address: 'rua 12',
-    state: 'estado2',
-    district: 'bairro2',
-    city: 'cidade2',
-    value: 0,
-    limit: 5,
-    picture: 'https://thispersondoesnotexist.com/image',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ownerId: '21'
-  },
-  {
-    id: '13',
-    slug: 'Evento3',
-    name: 'evento3',
-    startDate: add(new Date(), { days: 5 }),
-    endDate: add(new Date(), { days: 6 }),
-    active: true,
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis fugiat est aperiam corrupti nam cupiditate blanditiis, unde architecto pariatur hic veniam molestias, omnis porro laborum, nostrum ipsa inventore iusto. Distinctio!',
-    address: 'rua 13',
-    state: 'estado3',
-    district: 'bairro3',
-    city: 'cidade3',
-    value: 0,
-    limit: 5,
-    picture: 'https://thispersondoesnotexist.com/image',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ownerId: '31'
-  }
-];
-
 const query: Query = {
-  select: 'id startDate endDate',
-  populate: [
-    { path: 'user', select: 'name' },
-    { path: 'residence', select: 'identification users' }
-  ],
+  select:
+    'id name startDate endDate limit picture value reservations active slug',
   filter: [
     {
       and: [
         {
-          path: 'startDate',
-          operator: 'gte',
-          value: sub(startOfMonth(new Date()), { days: 7 }).toISOString(),
-          type: 'date'
+          startDate: {
+            gte: sub(startOfMonth(new Date()), { days: 7 }).toISOString()
+          }
         },
         {
-          path: 'startDate',
-          operator: 'lte',
-          value: add(endOfMonth(new Date()), { days: 7 }).toISOString(),
-          type: 'date'
+          startDate: {
+            lte: add(endOfMonth(new Date()), { days: 7 }).toISOString()
+          }
         }
       ]
     }
@@ -118,12 +54,26 @@ interface EventsPageProps {
   data: IEvent[];
 }
 const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
-  const [events, setEvents] = useState(formatEventsToCalendar(mockEvents));
+  const [events, setEvents] = useState(formatEventsToCalendar(data));
+  const [createEventOpen, setCreateEventOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const { push } = useRouter();
 
-  const handleDateClick = (date: Date) => {
-    push(`/panel/reservations/date/${date}`);
+  const { push } = useRouter();
+  const { getEvents } = useEvent();
+
+  const getData = useCallback(
+    async (query: Query) => {
+      const data = await getEvents(query);
+      setEvents(formatEventsToCalendar(data));
+    },
+    [getEvents]
+  );
+
+  const handleFilter = (term: string) => {
+    if (term) {
+      const filter: FiltersFields = [{ name: { contains: term } }];
+      getData({ ...query, filter });
+    }
   };
 
   const handleMonthChange = async (date: Date) => {
@@ -139,22 +89,46 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
         }
       }
     ];
-    console.log(QueryString({ ...query, filter }));
+    getData({ ...query, filter });
   };
+
+  useEffect(() => {
+    getData(query);
+  }, [getData]);
+
   return (
     <>
       <Head>
         <title>Eventos | Agendei</title>
       </Head>
+      <Tooltip title="Criar evento">
+        <Fab
+          color="primary"
+          onClick={() => setCreateEventOpen(true)}
+          sx={{
+            position: 'fixed',
+            right: 0,
+            borderRadius: '20px 0 0 20px',
+            top: '90px'
+          }}
+        >
+          <i className="fa fa-calendar-plus-o fa-2x" />
+        </Fab>
+      </Tooltip>
+
+      <CreateEventDrawer
+        open={createEventOpen}
+        setOpen={() => setCreateEventOpen(false)}
+      />
 
       <Box
         display="flex"
         alignItems="center"
         justifyContent="space-between"
         flexDirection={{ md: 'row', xs: 'column' }}
-        my={2}
+        mb={4}
       >
-        <Typography variant="h4" component="h2">
+        <Typography variant="h4" color="primary.main" component="h2">
           Agenda
         </Typography>
         <Box
@@ -167,7 +141,13 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
           width={'100%'}
           maxWidth={600}
         >
-          <SearchInput onChange={setSearch} label="Buscar evento" />
+          <SearchInput
+            onChange={value => {
+              handleFilter(value);
+              setSearch(value);
+            }}
+            label="Buscar evento"
+          />
         </Box>
       </Box>
       <Grid container>
@@ -180,30 +160,63 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
           border="1px solid #ddd"
           height={{ xs: 430, md: 'calc(100vh - 100px)' }}
         >
-          <Calendar
-            events={events}
-            onMonthChange={handleMonthChange}
-            onDateClick={handleDateClick}
-          />
+          <Calendar events={events} onMonthChange={handleMonthChange} />
         </Grid>
         <Grid item xs={12} md={4} pl={2}>
-          <Typography fontWeight={600}>Em Andamento</Typography>
-          {events
-            .filter(
-              event =>
-                new Date(event.resource.startDate) < new Date() &&
-                new Date(event.resource.endDate) > new Date()
-            )
-            .map(event => (
-              <EventCard key={event.resource.id} event={event} current />
-            ))}
-          <Divider sx={{ my: 2 }} />
-          <Typography fontWeight={600}>Em Breve</Typography>
-          {events
-            .filter(event => new Date(event.resource.startDate) > new Date())
-            .map(event => (
-              <EventCard key={event.resource.id} event={event} />
-            ))}
+          {search ? (
+            <>
+              <Typography fontWeight={600} color="primary.main" mb={4}>
+                Resultado da busca
+              </Typography>
+              {events?.map(event => (
+                <EventCard key={event.resource.id} event={event} current />
+              ))}
+            </>
+          ) : (
+            <>
+              <Typography fontWeight={600} color="primary.main" mb={4}>
+                Eventos do mês
+              </Typography>
+              <Typography fontWeight={600}>Em Andamento</Typography>
+              {events
+                ?.filter(
+                  event =>
+                    new Date(event.resource.startDate) < new Date() &&
+                    new Date(event.resource.endDate) > new Date() &&
+                    event.resource.active
+                )
+                .map(event => (
+                  <EventCard key={event.resource.id} event={event} current />
+                ))}
+
+              {!events?.filter(
+                event =>
+                  new Date(event.resource.startDate) < new Date() &&
+                  new Date(event.resource.endDate) > new Date() &&
+                  event.resource.active
+              ).length && <EmptyData message="Nenhum evento em andamento" />}
+
+              <Divider sx={{ my: 2 }} />
+              <Typography fontWeight={600}>Em Breve</Typography>
+              {events
+                ?.filter(
+                  event =>
+                    new Date(event.resource.startDate) > new Date() &&
+                    event.resource.active
+                )
+                .map(event => (
+                  <EventCard key={event.resource.id} event={event} />
+                ))}
+
+              {!events?.filter(
+                event =>
+                  new Date(event.resource.startDate) > new Date() &&
+                  event.resource.active
+              ).length && (
+                <EmptyData message="Nenhum evento no restante do mês" />
+              )}
+            </>
+          )}
         </Grid>
       </Grid>
     </>
@@ -212,15 +225,9 @@ const EventsPage: React.FC<EventsPageProps> = ({ data }) => {
 
 export default EventsPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  try {
-    const data = await EventService.getEvents(query);
-    return {
-      props: { data }
-    };
-  } catch (err) {
-    return {
-      props: { data: [] }
-    };
-  }
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+    revalidate: 60 * 60 * 24 // 24 horas
+  };
 };

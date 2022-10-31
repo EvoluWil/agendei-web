@@ -14,7 +14,6 @@ interface UserContextData {
   getUsers: (query: Query) => Promise<User[]>;
   getUser: (userId: string) => Promise<User>;
   updateUser: (userId: string, data: FieldValues) => Promise<void>;
-  updateDefaulter: (userId: string, defaulter: boolean) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
   createUser: (data: FieldValues) => Promise<User>;
 }
@@ -45,13 +44,6 @@ const UserProvider: React.FC<UserContextProps> = ({ children }) => {
     []
   );
 
-  const updateDefaulter = useCallback(
-    async (userId: string, defaulter: boolean) => {
-      return UserService.updateUser(userId, { defaulter });
-    },
-    []
-  );
-
   const deleteUser = useCallback(async (userId: string) => {
     return UserService.deleteUser(userId);
   }, []);
@@ -62,10 +54,9 @@ const UserProvider: React.FC<UserContextProps> = ({ children }) => {
       getUser,
       createUser,
       updateUser,
-      deleteUser,
-      updateDefaulter
+      deleteUser
     }),
-    [createUser, updateUser, deleteUser, getUsers, getUser, updateDefaulter]
+    [createUser, updateUser, deleteUser, getUsers, getUser]
   );
   return (
     <UserContext.Provider value={providerValue}>

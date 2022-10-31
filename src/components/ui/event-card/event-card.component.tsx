@@ -31,10 +31,13 @@ export const EventCard: React.FC<EventCardProps> = ({
         src={event?.resource?.picture}
         sx={{
           width: 56,
-          height: 56
+          height: 56,
+          bgcolor: 'white',
+          color: 'primary.main',
+          fontSize: 24
         }}
       >
-        <i className="fa fa-calendar-check-o" />
+        <i className="fa fa-calendar-check-o " />
       </Avatar>
       <Box display="flex" flexDirection="column" gap={0.5}>
         <Typography fontWeight="bold" color={current ? 'text.primary' : '#fff'}>
@@ -49,7 +52,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           {event?.resource?.value ? event?.resource?.value : 'Gratuito'}
           <i className="fa fa-users" style={{ margin: '0 4px 0 8px' }} />
           {event?.resource?.limit
-            ? `${event?.resource?.limit} - Pessoas`
+            ? `${event?.resource?.reservations?.length}/${event?.resource?.limit} - Pessoas`
             : 'Sem limite de pessoas'}
         </Typography>
         <Typography variant="caption" color={current ? 'text.primary' : '#fff'}>

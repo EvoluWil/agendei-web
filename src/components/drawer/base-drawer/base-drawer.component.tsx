@@ -6,6 +6,7 @@ interface BaseDrawerProps {
   setOpen: () => void;
   content: JSX.Element;
   width: number;
+  height?: string;
   direction?: 'bottom' | 'left' | 'right' | 'top';
 }
 
@@ -14,6 +15,7 @@ export const BaseDrawer: React.FC<BaseDrawerProps> = ({
   setOpen,
   content,
   width,
+  height,
   direction = 'right'
 }) => {
   return (
@@ -42,7 +44,7 @@ export const BaseDrawer: React.FC<BaseDrawerProps> = ({
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          height="100%"
+          height={height}
           gap={4}
           p={4}
         >

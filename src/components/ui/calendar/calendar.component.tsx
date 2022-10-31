@@ -1,5 +1,6 @@
 import { format, getDay, parse, startOfWeek } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -42,15 +43,14 @@ export type CalendarEvent = {
 
 interface CalendarProps {
   events: CalendarEvent[];
-  onDateClick: (startDate: Date) => void;
   onMonthChange: (date: Date) => void;
 }
 
 export const Calendar: React.FC<CalendarProps> = ({
   events,
-  onDateClick,
   onMonthChange
 }) => {
+  const { push } = useRouter();
   return (
     <BigCalendar
       style={{ height: '95%' }}
@@ -85,11 +85,8 @@ export const Calendar: React.FC<CalendarProps> = ({
       views={['month']}
       startAccessor="start"
       endAccessor="end"
-      onSelectSlot={({ start }) => {
-        onDateClick(start);
-      }}
-      onSelectEvent={({ start }) => {
-        onDateClick(start);
+      onSelectEvent={({ resource }) => {
+        push(`/events/${resource.slug}`);
       }}
       onNavigate={event => onMonthChange(event)}
       culture="pt-BR"

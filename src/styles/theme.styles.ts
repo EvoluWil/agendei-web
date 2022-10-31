@@ -20,7 +20,7 @@ const theme = createTheme({
       main: '#FCA600'
     },
     success: {
-      main: '#00D34D'
+      main: '#00A04D'
     },
     grey: {
       50: '#FAFAFA',

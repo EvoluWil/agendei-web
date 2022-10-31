@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../../contexts/auth.context';
-import { capitalize } from '../../../utils/formatters/captalize.util';
+import { capitalize } from '../../../utils/formatters/capitalize.util';
 import {
   UserInformationContainer,
   UserName,
