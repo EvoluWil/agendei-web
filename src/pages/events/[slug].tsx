@@ -284,16 +284,6 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
         >
           <Typography
             variant="h4"
-            color={
-              !event.active
-                ? 'primary.main'
-                : new Date(event.startDate) < new Date() &&
-                  new Date(event.endDate) > new Date()
-                ? 'text.primary'
-                : new Date(event.startDate) > new Date()
-                ? 'white'
-                : 'primary.main'
-            }
             component="h2"
             display="flex"
             alignItems="center"
@@ -301,6 +291,16 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
           >
             {capitalize(event.name)}{' '}
             <Typography
+              color={
+                !event.active
+                  ? 'primary.main'
+                  : new Date(event.startDate) < new Date() &&
+                    new Date(event.endDate) > new Date()
+                  ? 'text.primary'
+                  : new Date(event.startDate) > new Date()
+                  ? 'white'
+                  : 'primary.main'
+              }
               bgcolor={
                 !event.active
                   ? '#ccc'
