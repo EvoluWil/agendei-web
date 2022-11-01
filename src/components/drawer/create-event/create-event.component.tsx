@@ -71,10 +71,11 @@ export const CreateEventDrawer: React.FC<CreateEventDrawerProps> = ({
       setLoading(true);
       const { slug } = await createEvent(data);
       push(`/events/${slug}`);
+      NestSuccess('Evento criado com sucesso');
       setLoading(false);
     } catch (err) {
+      NestError(err);
       setLoading(false);
-      console.log(err);
     }
   };
 
@@ -82,7 +83,7 @@ export const CreateEventDrawer: React.FC<CreateEventDrawerProps> = ({
     try {
       setLoading(true);
       await updateEvent(`${event?.id}`, data);
-      NestSuccess('Evento criado com sucesso');
+      NestSuccess('Evento atualizado com sucesso');
       setOpen();
       onSubmit && onSubmit();
       setLoading(false);

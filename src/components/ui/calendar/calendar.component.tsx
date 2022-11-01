@@ -5,6 +5,8 @@ import React from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../contexts/auth.context';
 import { IEvent } from '../../../data/models/event.model';
 
 const locales = {
@@ -51,6 +53,7 @@ export const Calendar: React.FC<CalendarProps> = ({
   onMonthChange
 }) => {
   const { push } = useRouter();
+  const { user } = useAuth();
   return (
     <BigCalendar
       style={{ height: '95%' }}
@@ -86,7 +89,10 @@ export const Calendar: React.FC<CalendarProps> = ({
       startAccessor="start"
       endAccessor="end"
       onSelectEvent={({ resource }) => {
-        push(`/events/${resource.slug}`);
+        if (user) {
+          return push(`/events/${resource.slug}`);
+        }
+        toast.info('Faça login ou crie uma conta para acessar eventos');
       }}
       onNavigate={event => onMonthChange(event)}
       culture="pt-BR"

@@ -48,7 +48,7 @@ const Report: React.FC<ReportProps> = ({ data }) => {
         mb={4}
       >
         <Typography variant="h4" color="primary.main" component="h2">
-          Agenda
+          Relatório
         </Typography>
       </Box>
       <Box component={Paper} p={2}>

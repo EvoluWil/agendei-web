@@ -3,6 +3,8 @@ import { ptBR } from 'date-fns/locale';
 import { Box, Avatar, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { CalendarEvent } from '../calendar/calendar.component';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../../contexts/auth.context';
 
 interface EventCardProps {
   event: CalendarEvent;
@@ -14,6 +16,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   current = false
 }) => {
   const { push } = useRouter();
+  const { user } = useAuth();
   return (
     <Box
       key={event.resource.id}
@@ -25,7 +28,12 @@ export const EventCard: React.FC<EventCardProps> = ({
       gap={2}
       borderRadius={5}
       sx={{ '&:hover': { opacity: 0.8 }, cursor: 'pointer' }}
-      onClick={() => push(`/events/${event.resource.slug}`)}
+      onClick={() => {
+        if (user) {
+          return push(`/events/${event.resource.slug}`);
+        }
+        toast.info('Faça login ou crie uma conta para acessar eventos');
+      }}
     >
       <Avatar
         src={event?.resource?.picture}

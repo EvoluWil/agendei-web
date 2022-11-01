@@ -34,7 +34,7 @@ import {
 
 const query: Query = {
   select:
-    'name reservations picture startDate endDate description limit value createdAt address',
+    'name reservations picture startDate endDate description limit value createdAt address active slug',
   populate: [
     { path: 'owner', select: 'name' },
     {
@@ -229,7 +229,10 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
             maxWidth={230}
           >
             {event?.reservations?.some(
-              reservation => reservation?.user?.id === user?.id
+              reservation =>
+                reservation?.user?.id === user?.id &&
+                (reservation.status === 'PENDING' ||
+                  reservation.status === 'APPROVED')
             ) ? (
               <Button
                 onClick={() => {
@@ -281,14 +284,36 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
         >
           <Typography
             variant="h4"
-            color="primary.main"
+            color={
+              !event.active
+                ? 'primary.main'
+                : new Date(event.startDate) < new Date() &&
+                  new Date(event.endDate) > new Date()
+                ? 'text.primary'
+                : new Date(event.startDate) > new Date()
+                ? 'white'
+                : 'primary.main'
+            }
             component="h2"
             display="flex"
             alignItems="center"
             gap={2}
           >
             {capitalize(event.name)}{' '}
-            <Typography bgcolor="#ccc" px={2} borderRadius={2}>
+            <Typography
+              bgcolor={
+                !event.active
+                  ? '#ccc'
+                  : new Date(event.startDate) < new Date() &&
+                    new Date(event.endDate) > new Date()
+                  ? 'secondary.main'
+                  : new Date(event.startDate) > new Date()
+                  ? 'primary.main'
+                  : '#ccc'
+              }
+              px={2}
+              borderRadius={2}
+            >
               {!event.active
                 ? 'Cancelado'
                 : new Date(event.startDate) < new Date() &&
@@ -345,11 +370,13 @@ const EventDetail: React.FC<EventDetailProps> = ({ data }) => {
                 .map((reservation, index) => (
                   <Tooltip key={reservation.id} title={reservation?.user?.name}>
                     <Avatar
+                      onClick={() => push(`/profile/${reservation?.user?.id}`)}
                       sx={{
                         ml: -1.5,
                         boxShadow: '4px 4px 4px rgba(0,0,0,0.2)',
                         bgcolor:
-                          index % 2 === 0 ? 'primary.main' : 'secondary.main'
+                          index % 2 === 0 ? 'primary.main' : 'secondary.main',
+                        cursor: 'pointer'
                       }}
                       src={reservation?.user?.picture}
                     >

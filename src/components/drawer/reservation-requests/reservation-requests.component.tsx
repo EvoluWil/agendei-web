@@ -65,7 +65,7 @@ export const ReservationRequestDrawer: React.FC<
       const data = await getReservationsRequests(eventId);
       setReservations(data);
     } catch (err) {
-      console.log(err);
+      NestError(err);
     }
   }, [eventId, getReservationsRequests]);
 

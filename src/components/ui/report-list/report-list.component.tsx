@@ -22,6 +22,7 @@ import {
   ReservationStatusLabel
 } from '../../../data/models/reservation.model';
 import { User } from '../../../data/models/user.model';
+import { EmptyData } from '../empty-data/empty-data.component';
 
 export interface ReportListData {
   user: User;
@@ -97,14 +98,14 @@ export const ReportList: React.FC<ReportListProps> = ({ users }) => {
                 borderBottomLeftRadius: '20px'
               }}
             >
-              {!!user.reservations?.length && (
-                <Box
-                  borderRadius="12px"
-                  p={2}
-                  border="1px solid #ddd"
-                  sx={{ background: '#fafafa' }}
-                >
-                  <Typography>Reservas</Typography>
+              <Box
+                borderRadius="12px"
+                p={2}
+                border="1px solid #ddd"
+                sx={{ background: '#fafafa' }}
+              >
+                <Typography>Reservas</Typography>
+                {!!user.reservations?.length ? (
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -158,17 +159,19 @@ export const ReportList: React.FC<ReportListProps> = ({ users }) => {
                       ))}
                     </TableBody>
                   </Table>
-                </Box>
-              )}
-              {!!user.ownerEvents?.length && (
-                <Box
-                  borderRadius="12px"
-                  p={2}
-                  my={2}
-                  border="1px solid #ddd"
-                  sx={{ background: '#fafafa' }}
-                >
-                  <Typography>Eventos</Typography>
+                ) : (
+                  <EmptyData message="Nenhuma reserva realizada" />
+                )}
+              </Box>
+              <Box
+                borderRadius="12px"
+                p={2}
+                my={2}
+                border="1px solid #ddd"
+                sx={{ background: '#fafafa' }}
+              >
+                <Typography>Eventos</Typography>
+                {!!user.ownerEvents?.length ? (
                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                       <TableRow>
@@ -215,8 +218,10 @@ export const ReportList: React.FC<ReportListProps> = ({ users }) => {
                       ))}
                     </TableBody>
                   </Table>
-                </Box>
-              )}
+                ) : (
+                  <EmptyData message="Nenhum evento criado" />
+                )}
+              </Box>
             </Box>
           </Collapse>
         </Box>

@@ -79,7 +79,7 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
 
   const { updateUser, deleteUser } = useUser();
   const { push } = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, user: authUser } = useAuth();
 
   const {
     control,
@@ -117,6 +117,7 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
   };
 
   const handleCancelUpdateUser = async () => {
+    setHasEdit(false);
     reset({
       name: user?.name,
       email: user?.email
@@ -126,7 +127,10 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
   return (
     <>
       <Head>
-        <title>Minha Conta | Agendei</title>
+        <title>
+          {authUser?.id === user?.id ? 'Minha Conta' : 'Detalhe de usuário'} |
+          Agendei
+        </title>
       </Head>
 
       <UpdatePassword
@@ -168,33 +172,37 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
           mb={4}
         >
           <Typography variant="h4" color="primary.main" component="h2">
-            Minha conta
+            {authUser?.id === user?.id ? 'Minha conta' : 'Detalhe de usuário'}
           </Typography>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="flex-end"
-            flexDirection={{ md: 'row', xs: 'column' }}
-            mt={{ md: 0, xs: 2 }}
-            gap={1}
-            width={'100%'}
-            maxWidth={400}
-          >
-            <Button
-              onClick={() => setUpdatePasswordDrawer(true)}
-              color="primary"
+
+          {authUser?.id === user?.id && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flex-end"
+              flexDirection={{ md: 'row', xs: 'column' }}
+              mt={{ md: 0, xs: 2 }}
+              gap={1}
+              width={'100%'}
+              maxWidth={400}
             >
-              Alterar senha
-            </Button>
-            <Button
-              onClick={() => setDeleteUserDialog(true)}
-              variant="outlined"
-              color="error"
-            >
-              Apagar conta
-            </Button>
-          </Box>
+              <Button
+                onClick={() => setUpdatePasswordDrawer(true)}
+                color="primary"
+              >
+                Alterar senha
+              </Button>
+              <Button
+                onClick={() => setDeleteUserDialog(true)}
+                variant="outlined"
+                color="error"
+              >
+                Apagar conta
+              </Button>
+            </Box>
+          )}
         </Box>
+
         <Box
           display="flex"
           flexDirection="column"
@@ -203,41 +211,49 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
           borderRadius={4}
           p={2}
         >
-          {!hasEdit ? (
-            <Button
-              variant="text"
-              color="primary"
-              onClick={() => setHasEdit(prev => !prev)}
-              type="submit"
-              sx={{ ml: 'auto', width: 'auto' }}
-            >
-              <i className="fa fa-pencil" style={{ marginRight: '4px' }} />
-              Editar
-            </Button>
-          ) : (
-            <Box display="flex" ml="auto" mr={1}>
-              <Button
-                variant="text"
-                color="success"
-                onClick={handleSubmit(handleUpdateUser)}
-                loading={loading}
-                startIcon={
-                  <i className="fa fa-check" style={{ marginRight: '4px' }} />
-                }
-              >
-                Salvar
-              </Button>
-              <Button
-                variant="text"
-                color="error"
-                onClick={handleCancelUpdateUser}
-                type="submit"
-              >
-                <i className="fa fa-trash" style={{ marginRight: '4px' }} />
-                Cancelar
-              </Button>
-            </Box>
+          {authUser?.id === user?.id && (
+            <>
+              {!hasEdit ? (
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => setHasEdit(prev => !prev)}
+                  type="submit"
+                  sx={{ ml: 'auto', width: 'auto' }}
+                >
+                  <i className="fa fa-pencil" style={{ marginRight: '4px' }} />
+                  Editar
+                </Button>
+              ) : (
+                <Box display="flex" ml="auto" mr={1}>
+                  <Button
+                    variant="text"
+                    color="success"
+                    onClick={handleSubmit(handleUpdateUser)}
+                    loading={loading}
+                    startIcon={
+                      <i
+                        className="fa fa-check"
+                        style={{ marginRight: '4px' }}
+                      />
+                    }
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                    variant="text"
+                    color="error"
+                    onClick={handleCancelUpdateUser}
+                    type="submit"
+                  >
+                    <i className="fa fa-trash" style={{ marginRight: '4px' }} />
+                    Cancelar
+                  </Button>
+                </Box>
+              )}
+            </>
           )}
+
           <Grid
             container
             spacing={0}
@@ -257,7 +273,8 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
               gap={2}
             >
               <TextField
-                label="Nome do evento"
+                label="Nome do usuário"
+                disabled={authUser?.id !== user?.id || !hasEdit}
                 name="name"
                 defaultValue={user?.name}
                 control={control}
@@ -291,7 +308,7 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
             flexDirection={{ md: 'row', xs: 'column' }}
           >
             <Typography color="primary" fontWeight="bold" variant="h5">
-              Meus Eventos
+              {authUser?.id === user?.id ? 'Meus Eventos' : 'Eventos'}
             </Typography>
           </Box>
           <Grid container spacing={4} my={2}>
@@ -303,7 +320,13 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
               ))
             ) : (
               <Grid item xs={12}>
-                <EmptyData message="Que pena! Você ainda não possui nenhum evento." />
+                <EmptyData
+                  message={
+                    authUser?.id === user?.id
+                      ? 'Que pena! Você ainda não possui nenhum evento.'
+                      : 'Usuário sem eventos'
+                  }
+                />
               </Grid>
             )}
           </Grid>
@@ -317,7 +340,7 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
           p={2}
         >
           <Typography color="primary" fontWeight="bold" variant="h5">
-            Minhas Reservas
+            {authUser?.id === user?.id ? 'Minhas Reservas' : 'Reservas'}
           </Typography>
           <Grid container spacing={4} my={2}>
             {user?.reservations?.length ? (
@@ -328,7 +351,13 @@ const Profile: React.FC<UserDetailProps> = ({ user }) => {
               ))
             ) : (
               <Grid item xs={12}>
-                <EmptyData message="Que pena! Você ainda não possui nenhuma reserva." />
+                <EmptyData
+                  message={
+                    authUser?.id === user?.id
+                      ? 'Que pena! Você ainda não possui nenhuma reserva.'
+                      : 'Usuário sem reservas'
+                  }
+                />
               </Grid>
             )}
           </Grid>

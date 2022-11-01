@@ -40,7 +40,7 @@ export const ReservationStatusDrawer: React.FC<
       const data = await getReservation(reservationId, query);
       setReservation(data);
     } catch (err) {
-      console.log(err);
+      NestError(err);
     }
   }, [reservationId, getReservation]);
 
@@ -65,7 +65,7 @@ export const ReservationStatusDrawer: React.FC<
     <BaseDrawer
       open={open}
       setOpen={handleClose}
-      width={25}
+      width={35}
       height="auto"
       content={
         <Box
