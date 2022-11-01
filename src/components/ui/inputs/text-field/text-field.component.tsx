@@ -13,6 +13,7 @@ export interface TextFieldStyledProps extends OutlinedTextFieldPropsEdit {
   name: string;
   icon?: JSX.Element;
   helperText?: any;
+  hasHelper?: boolean;
 }
 export const TextField: React.FC<TextFieldStyledProps> = ({
   control,
@@ -22,8 +23,10 @@ export const TextField: React.FC<TextFieldStyledProps> = ({
   name,
   icon,
   onChange,
+  hasHelper,
   value,
   type,
+  error,
   ...rest
 }) => {
   const [viewPassword, setViewPassword] = useState(false);
@@ -40,7 +43,7 @@ export const TextField: React.FC<TextFieldStyledProps> = ({
       size="small"
       variant={'outlined'}
       name={field.name}
-      error={!!helperText}
+      error={hasHelper ? error : !!helperText}
       value={field.value}
       label={label}
       type={type === 'password' && !viewPassword ? 'password' : 'text'}

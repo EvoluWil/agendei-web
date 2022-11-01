@@ -32,7 +32,7 @@ const CreateEventValidation = yup.object().shape({
     .nullable(),
   address: yup.string().required('Endereço é obrigatório'),
   description: yup.string().required('Descrição é obrigatório'),
-  value: yup.number().typeError('Valor invalido').default(0),
+  value: yup.number().typeError('Valor deve ser um número').default(0),
   limit: yup
     .number()
     .typeError('Limite de pessoas deve ser um número')
@@ -161,7 +161,9 @@ export const CreateEventDrawer: React.FC<CreateEventDrawerProps> = ({
             type="number"
             defaultValue={0}
             control={control}
-            helperText={errors?.value?.message}
+            hasHelper
+            error={!!errors?.value}
+            helperText={errors?.value?.message || 'Deixe "0" para GRATUITO'}
           />
           <TextField
             label="Limite de pessoas"
@@ -169,7 +171,11 @@ export const CreateEventDrawer: React.FC<CreateEventDrawerProps> = ({
             type="number"
             defaultValue={0}
             control={control}
-            helperText={errors?.limit?.message}
+            error={!!errors?.limit}
+            hasHelper
+            helperText={
+              errors?.limit?.message || 'Deixe "0" para sem limite de pessoas'
+            }
           />
           <TextField
             label="Descrição"
