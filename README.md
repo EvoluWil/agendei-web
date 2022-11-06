@@ -6,7 +6,7 @@
 ## 🧐 Sobre 
 
 <h4 align="center"> 
-	Agendei é um sistema de eventos, com genciamento de aprovação, a ideia do projeto patiu de um desafio para colocação profissional
+	Agendei é um sistema de eventos, com genciamento de aprovação, a ideia do projeto partiu de um desafio para colocação profissional
 </h4>
 
 
